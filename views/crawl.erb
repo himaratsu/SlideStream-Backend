@@ -1,0 +1,5 @@
+<h1>Crawl</h1>
+
+<% @entries.each do |entry| %>
+  <li><a href="<%= entry.link %>"><%= entry.title %></a>
+<% end %>
