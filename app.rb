@@ -1,11 +1,12 @@
 require 'sinatra'
+require 'sinatra/reloader' if development?
 require 'rss'
 require 'uri'
 require 'yaml'
 require_relative 'models/entry.rb'
 
 ActiveRecord::Base.configurations = YAML.load_file('database.yml')
-ActiveRecord::Base.establish_connection(:development)
+ActiveRecord::Base.establish_connection(ENV["DATABASE_URL"] || :development)
 
 
 get '/' do
