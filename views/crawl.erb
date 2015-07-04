@@ -1,5 +1,9 @@
-<h1>Crawl</h1>
+<title>登録されたエントリー</title>
+
+<h1>登録されたエントリー</h1>
+
+<h2><a href="/crawl">新着情報をクロールする</a></h2>
 
 <% @entries.each do |entry| %>
-  <li><a href="<%= entry.link %>"><%= entry.title %></a>
+  <li><a href="<%= entry['link'] %>"><%= entry['title'] %></a>
 <% end %>

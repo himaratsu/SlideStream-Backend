@@ -14,33 +14,55 @@ get '/' do
 end
 
 get '/crawl' do
-  # クロール
-  feed_url="http://b.hatena.ne.jp/search/text?q=slideshare&mode=rss"
-  rss = RSS::Parser.parse(feed_url)
-  
-  entries = []
+  slideshare_url="http://b.hatena.ne.jp/search/text?q=slideshare&mode=rss&sort=popular"
+  crawl(slideshare_url)
 
-  rss.items.each do |item|
+  speakerdeck_url="http://b.hatena.ne.jp/search/text?q=speakerdeck&mode=rss&sort=popular"
+  crawl(speakerdeck_url)
 
-    puts title = item.title
-    puts url = item.link
-    puts description = item.description
-    # puts item.hatena_bookmarkcount
-  
-    entry = Entry.new(title, url, description)
-    puts entry.show
-    puts ""
-
-    entries.push(entry)
-
-  end
-
-  @entries = entries
-  erb :crawl
-
+  redirect 'entries'
 end
 
 get '/entries' do
-  @entries = Entry.find_all
+  @entries = Entry.all
   erb :crawl
 end
+
+get '/new' do
+  erb :new_entry
+end
+
+post '/new' do
+  entry = Entry.new
+  entry.title = params[:title]
+  entry.link = params[:link]
+  entry.description = params[:description]
+  entry.save
+
+  redirect '/entries'
+end
+
+
+def crawl(feed_url)
+  rss = RSS::Parser.parse(feed_url)
+
+  rss.items.each do |item|
+    if Entry.exists?(:link => item.link)
+      puts "exist record:[ " + link + " ]"
+    else
+      entry = Entry.new
+      entry.title = item.title
+      entry.link = item.link
+      entry.description = item.description
+      # puts item.hatena_bookmarkcount
+      entry.save
+
+      puts "save new record: " + item.title
+    end
+  end
+end
+
+
+
+
+
