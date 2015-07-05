@@ -14,12 +14,15 @@
 ActiveRecord::Schema.define(version: 20150705100000) do
 
   create_table "entries", force: :cascade do |t|
-    t.string  "title"
-    t.string  "link"
-    t.string  "description"
-    t.string  "slide_base_image_url"
-    t.string  "sitename"
-    t.integer "total_count"
+    t.string   "title"
+    t.string   "link"
+    t.string   "description"
+    t.integer  "hatebu_count"
+    t.string   "category"
+    t.datetime "postdate"
+    t.string   "slide_base_image_url"
+    t.string   "sitename"
+    t.integer  "total_count"
   end
 
 end

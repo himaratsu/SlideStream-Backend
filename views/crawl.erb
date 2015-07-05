@@ -2,9 +2,9 @@
 
 <h1>登録されたエントリー</h1>
 
-<h2><a href="/crawl">新着情報をクロールする</a></h2>
+<h2><a href="/crawl">人気情報をクロールする</a></h2>
 
 <% @entries.each do |entry| %>
-  <li><a href="<%= entry['link'] %>"><%= entry['title'] %></a> 
+  <li><a href="<%= entry['link'] %>"><%= entry['title'] %></a> (<%= entry['hatebu_count'] %> users)
   	- <a href="<%= entry['slide_base_image_url'] %>"><%= entry['total_count'] %></a>
 <% end %>

@@ -18,7 +18,7 @@ get '/' do
 end
 
 get '/crawl' do
-  slideshare_url="http://b.hatena.ne.jp/search/text?q=slideshare&mode=rss&sort=popular"
+  slideshare_url="http://b.hatena.ne.jp/search/text?q=www.slideshare.net&mode=rss&sort=popular"
   crawl(slideshare_url, "slideshare")
 
   # speakerdeck_url="http://b.hatena.ne.jp/search/text?q=speakerdeck&mode=rss&sort=popular"
@@ -54,35 +54,52 @@ end
 
 
 def crawl(feed_url, sitename)
-  rss = RSS::Parser.parse(feed_url)
 
-  rss.items.each do |item|
+  xml_doc = Nokogiri::XML.parse(open(feed_url))
 
-    if Entry.exists?(:link => item.link)
-      entry = Entry.find_by_link(item.link)
-      puts entry
+  item_nodes = xml_doc.css("//item")
+
+  item_nodes.each do |item|
+
+    title = item.css('title').text
+    link = item.css('link').text
+    description = item.css('description').text
+    dc_date = item.css('dc|date').text
+    dc_subject = item.css('dc|subject').text
+    hatena_bookmarkcount = item.css('hatena|bookmarkcount').text
+
+    if !link.include?("www.slideshare.net")
+      next
+    end
+
+    if Entry.exists?(:link => link)
+      entry = Entry.find_by_link(link)
 
       if sitename == "slideshare" 
-        scrape_slideshare(item.link, entry)
+        scrape_slideshare(link, entry)
       end
 
+      entry.hatebu_count = hatena_bookmarkcount
       entry.save
 
-      puts "exist record:[ " + item.link + " ]"
+      puts "exist record:[ " + title + " ]"
     else
       entry = Entry.new
-      entry.title = item.title
-      entry.link = item.link
-      entry.description = item.description
+      entry.title = title
+      entry.link = link
+      entry.description = description
+      entry.postdate = dc_date
+      entry.category = dc_subject
+      entry.hatebu_count = hatena_bookmarkcount
+      entry.sitename = sitename
 
       if sitename == "slideshare" 
-        scrape_slideshare(item.link, entry)
+        scrape_slideshare(link, entry)
       end
 
-      # puts item.hatena_bookmarkcount
       entry.save
 
-      puts "save new record: " + item.title
+      puts "save new record: " + title
     end
   end
 end
@@ -103,14 +120,12 @@ def scrape_slideshare(url, entry)
   doc = Nokogiri::HTML.parse(html, nil, charset)
   
   doc.xpath('//div[@id="svPlayerId"]').each do |node|
-    p "*********" 
-    p doc.title  # タイトルを表示
     p total_slides = node.xpath('//span[@id="total-slides"]').text
     entry.total_count = total_slides.to_i
 
     p slide_first = doc.xpath('//div[@class="slide show"]')[0].xpath('img[@class="slide_image"]').attribute('data-normal').value
     entry.slide_base_image_url = slide_first
-    p "*********"
+    p "------------"
   end
       
 end
