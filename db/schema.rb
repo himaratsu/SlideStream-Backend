@@ -11,16 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150705011628) do
+ActiveRecord::Schema.define(version: 20150705100000) do
 
-  create_table "entries", primary_key: "link", force: :cascade do |t|
-    t.string  "title",                limit: 100
-    t.string  "description",          limit: 1000
+  create_table "entries", force: :cascade do |t|
+    t.string  "title"
+    t.string  "link"
+    t.string  "description"
     t.string  "slide_base_image_url"
     t.string  "sitename"
     t.integer "total_count"
   end
-
-  add_index "entries", ["link"], name: "sqlite_autoindex_entries_1", unique: true
 
 end
