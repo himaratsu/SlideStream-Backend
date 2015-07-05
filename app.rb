@@ -112,12 +112,7 @@ def scrape_slideshare(url, entry)
     entry.slide_base_image_url = slide_first
     p "*********"
   end
-
-  
-  
-  
       
-
 end
 
 
