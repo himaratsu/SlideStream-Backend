@@ -41,6 +41,11 @@ get '/crawl_with_date' do
   end
 end
 
+get '/crawl_hotentry' do
+  crawl_all_hotentry
+  redirect 'entries'
+end
+
 get '/entries' do
   @entries = Entry.all
   erb :crawl
@@ -125,7 +130,7 @@ def crawl(feed_url, sitename)
 
       p "postdate insert before-----"
       p dc_date
-      
+
       entry.postdate = dc_date
 
       p "postdate insert after-----"
