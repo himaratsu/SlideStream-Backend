@@ -32,6 +32,12 @@ get '/entries' do
   erb :crawl
 end
 
+get '/entries.json' do 
+  content_type :json, :charset => 'utf-8'
+  entries = Entry.all
+  entries.to_json
+end
+
 get '/new' do
   erb :new_entry
 end
