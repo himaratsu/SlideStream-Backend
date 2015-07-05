@@ -27,11 +27,17 @@ get '/crawl' do
 end
 
 get '/crawl_with_date' do
-  if params.empty? || params.has_key?(:date)
+
+  if params.empty?
     '[Error] Usage: crawl_with_date?date=2015-07-01'
-  else
+  elsif params.include?("date")
     crawl_with_date(params[:date])
     redirect 'entries'
+  elsif params.include?("start_date") && params.include?("end_date")
+    crawl_with_date(params[:start_date], params[:end_date])
+    redirect 'entries'
+  else 
+    'Something Wrong'
   end
 end
 
@@ -42,7 +48,27 @@ end
 
 get '/entries.json' do 
   content_type :json, :charset => 'utf-8'
-  entries = Entry.all
+
+  if params.empty? || params.include?("mode")
+    entries = Entry.all
+  elsif params[:mode] == "today"
+    from = Time.now.at_beginning_of_day
+    to = from + 1.day
+    entries = Entry.where(postdate: from...to)
+  elsif params[:mode] == "this_week"
+    from = Time.now.at_beginning_of_week
+    to   = from + 1.week
+    entries = Entry.where(postdate: from...to)
+  elsif params[:mode] == "this_month"
+    from = Time.now.at_beginning_of_month
+    to   = from + 1.month
+    entries = Entry.where(postdate: from...to)
+  elsif params[:mode] == "all"
+    entries = Entry.all
+  else
+    entries = Entry.all
+  end
+
   entries.to_json
 end
 
@@ -123,8 +149,13 @@ def crawl_today_entry
   crawl_with_date(todayStr)
 end
 
-def crawl_with_date(dateStr)
-  feed_url = "http://b.hatena.ne.jp/search/text?date_begin="+dateStr+"&date_end="+dateStr+"&q=www.slideshare.net&sort=popular&users=&mode=rss"
+def crawl_with_date(startDateStr, endDateStr=nil)
+
+  if endDateStr == nil
+    endDateStr = startDateStr
+  end
+
+  feed_url = "http://b.hatena.ne.jp/search/text?date_begin="+startDateStr+"&date_end="+endDateStr+"&q=www.slideshare.net&sort=popular&users=&mode=rss"
   crawl(feed_url, "slideshare")
 end
 
