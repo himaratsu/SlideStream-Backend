@@ -122,7 +122,14 @@ def crawl(feed_url, sitename)
       entry.title = title
       entry.link = link
       entry.description = description
+
+      p "postdate insert before-----"
+      p dc_date
+      
       entry.postdate = dc_date
+
+      p "postdate insert after-----"
+
       entry.category = dc_subject
       entry.hatebu_count = hatena_bookmarkcount
       entry.sitename = sitename
