@@ -18,13 +18,21 @@ get '/' do
 end
 
 get '/crawl' do
-  slideshare_url="http://b.hatena.ne.jp/search/text?q=www.slideshare.net&mode=rss&sort=popular"
-  crawl(slideshare_url, "slideshare")
+  crawl_today_entry
 
   # speakerdeck_url="http://b.hatena.ne.jp/search/text?q=speakerdeck&mode=rss&sort=popular"
   # crawl(speakerdeck_url, "speakerdeck")
 
   redirect 'entries'
+end
+
+get '/crawl_with_date' do
+  if params.empty? || params.has_key?(:date)
+    '[Error] Usage: crawl_with_date?date=2015-07-01'
+  else
+    crawl_with_date(params[:date])
+    redirect 'entries'
+  end
 end
 
 get '/entries' do
@@ -102,6 +110,22 @@ def crawl(feed_url, sitename)
       puts "save new record: " + title
     end
   end
+end
+
+def crawl_all_hotentry
+  slideshare_url="http://b.hatena.ne.jp/search/text?q=www.slideshare.net&mode=rss&sort=popular"
+  crawl(slideshare_url, "slideshare")
+end
+
+def crawl_today_entry
+  today = Date.today
+  todayStr = today.strftime("%Y-%m-%d")
+  crawl_with_date(todayStr)
+end
+
+def crawl_with_date(dateStr)
+  feed_url = "http://b.hatena.ne.jp/search/text?date_begin="+dateStr+"&date_end="+dateStr+"&q=www.slideshare.net&sort=popular&users=&mode=rss"
+  crawl(feed_url, "slideshare")
 end
 
 def scrape_slideshare(url, entry)
