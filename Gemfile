@@ -10,6 +10,9 @@ gem 'json'
 gem 'rake'
 gem 'nokogiri'
 gem 'open_uri_redirections', '0.1.4'
+gem 'watir'
+gem 'phantomjs'
+gem 'rest-client'
 
 group :development do
   gem 'sqlite3'
