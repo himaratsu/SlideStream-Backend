@@ -14,6 +14,11 @@
 
 `http://image.slidesharecdn.com/howtomakevinelikeapp-140527233720-phpapp01/85/6-vine-1-320.jpg?cb=1401234210`
 
+Slide Size
+
+* http://image.slidesharecdn.com/howtomakevinelikeapp-140527233720-phpapp01/85/6-vine-1-320.jpg?cb=1401234210
+* http://image.slidesharecdn.com/howtomakevinelikeapp-140527233720-phpapp01/85/6-vine-1-638.jpg?cb=1401234210
+* http://image.slidesharecdn.com/howtomakevinelikeapp-140527233720-phpapp01/95/6-vine-1-1024.jpg?cb=1401234210
 
 ### Speaker Deck
 
