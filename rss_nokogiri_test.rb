@@ -1,7 +1,9 @@
 require 'open-uri'
 require 'nokogiri'
 
-feed_url = "http://b.hatena.ne.jp/search/text?q=www.slideshare.net&mode=rss&sort=popular"
+# query = "www.slideshare.net"
+query = "speakerdeck.com"
+feed_url = "http://b.hatena.ne.jp/search/text?q="+query+"&mode=rss&sort=popular"
 
 xml_doc = Nokogiri::XML.parse(open(feed_url))
 

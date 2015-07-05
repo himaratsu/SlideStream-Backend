@@ -1,7 +1,7 @@
 require 'rss'
 
 today = Date.today
-p todayStr = today.strftime("%Y-%m-%d")
+todayStr = today.strftime("%Y-%m-%d")
 
 feed_url = "http://b.hatena.ne.jp/search/text?date_begin="+todayStr+"&date_end="+todayStr+"&q=www.slideshare.net&sort=popular&users=&mode=rss"
 
