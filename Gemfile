@@ -8,6 +8,8 @@ gem 'activerecord'
 gem 'therubyracer'
 gem 'json'
 gem 'rake'
+gem 'nokogiri'
+gem 'open_uri_redirections', '0.1.4'
 
 group :development do
   gem 'sqlite3'
