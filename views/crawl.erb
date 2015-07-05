@@ -2,7 +2,9 @@
 
 <h1>登録されたエントリー</h1>
 
-<h2><a href="/crawl">人気情報をクロールする</a></h2>
+<h2><a href="/crawl_hotentry">人気情報をクロールする</a></h2>
+<h2><a href="/crawl">今日のホッテントリをクロールする</a></h2>
+<h2><a href="/crawl_with_date?start_date=2015-01-01&end_date=2015-06-30">上半期のホッテントリをクロールする</a></h2>
 
 <% @entries.each do |entry| %>
   <li><a href="<%= entry['link'] %>"><%= entry['title'] %></a> (<%= entry['hatebu_count'] %> users)
