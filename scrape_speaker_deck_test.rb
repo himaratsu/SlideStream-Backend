@@ -7,9 +7,8 @@ require 'rest-client'
 
 charset = nil
 
-url = "https://speakerdeck.com/ninjanails/death-to-icon-fonts"
-# url = "https://speakerdeck.com/ken_c_lo/zurui-design"
-# url = "http://sssslide.com/speakerdeck.com/pyama86/pepaboniokeruopenstackhacks"
+# url = "https://speakerdeck.com/ninjanails/death-to-icon-fonts"
+url = "https://speakerdeck.com/ken_c_lo/zurui-design"
 
 begin
   html = open(url, :allow_redirections => :all) do |f|
@@ -21,36 +20,15 @@ rescue OpenURI::HTTPError => ex
     return "no_url"
 end 
 
-# browser = Watir::Browser.new
-# browser.goto url
-
-# p browser.title
-# p browser.url
-
-# browser.wait
-
-
-# doc = Nokogiri::HTML.parse(browser.html)
-
-# p doc
 doc = Nokogiri::HTML.parse(html, nil, charset)
 
-# p "*********" 
-p doc.xpath('//meta[@property="og:image"]').attribute('content').text
-# p doc.title  # タイトルを表示
-# p total_slides = doc.xpath('//div[@class="selections"]')
+p slide_first_url = doc.xpath('//meta[@property="og:image"]').attribute('content').text
+# https://speakerd.s3.amazonaws.com/presentations/fcfca49087d04571a050ba2e9e663f36/slide_0.jpg
 
-# p slide_first = doc.xpath('//div[@id="player-content-wrapper"]')
-# p slide_title = doc.xpath('//h1').text
+p slide_hash = slide_first_url.split('/')[4]
 
-# p total_slides = doc.xpath('//div[@id="js__slide"]').attribute('data-total-slides').value
-
-# p "*********"
-
-
-doc = RestClient.get('http://speakerdeck.com/player/fcfca49087d04571a050ba2e9e663f36?')
+doc = RestClient.get('http://speakerdeck.com/player/' + slide_hash)
 parsed_doc = Nokogiri::HTML(doc) 
-p parsed_doc
+slide_count_nav = parsed_doc.xpath('//div[@class="previews"]').children.children.text
+p slide_count_nav.split(" ").last
 
-p parsed_doc.xpath('//div[@class="previews"]').children.children.text
-# parsed_doc.css('#yourSelectorHere') # or parsed_doc.xpath('...')
