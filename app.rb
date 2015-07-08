@@ -77,20 +77,17 @@ get '/entries.json' do
   entries.to_json
 end
 
-get '/new' do
-  erb :new_entry
+get '/entries/detail' do
+
+  if params.include?(:url)
+    '[Usage] /entries/detail?url=http://www.slideshare.net/masatonoguchi169/sprockets-49965435'
+    return
+  end
+
+  url = params[:url]
+  @entry = Entry.find_by_link(url)
+  erb :detail
 end
-
-post '/new' do
-  entry = Entry.new
-  entry.title = params[:title]
-  entry.link = params[:link]
-  entry.description = params[:description]
-  entry.save
-
-  redirect '/entries'
-end
-
 
 def crawl(feed_url, sitename)
 
