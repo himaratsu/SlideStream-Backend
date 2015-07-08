@@ -127,13 +127,8 @@ def crawl(feed_url, sitename)
       entry.title = title
       entry.link = link
       entry.description = description
-
-      p "postdate insert before-----"
-      p dc_date
-
       entry.postdate = dc_date
 
-      p "postdate insert after-----"
 
       entry.category = dc_subject
       entry.hatebu_count = hatena_bookmarkcount
@@ -190,7 +185,7 @@ def scrape_slideshare(url, entry)
     p total_slides = node.xpath('//span[@id="total-slides"]').text
     entry.total_count = total_slides.to_i
 
-    p slide_first = doc.xpath('//div[@class="slide show"]')[0].xpath('img[@class="slide_image"]').attribute('data-normal').value
+    p slide_first = doc.xpath('//section[@class="slide show"]')[0].xpath('img[@class="slide_image"]').attribute('data-normal').value
     entry.slide_base_image_url = slide_first
     p "------------"
   end
