@@ -1,0 +1,10 @@
+language: ruby
+rvm:
+- 2.0.0-p247
+deploy:
+  provider: heroku
+  api_key:
+    secure: gz0Q7BE08HDWfIucGJeH/dFODoU+zWTYiuYoxkuR/JB8NxSYTtPYCoTI0D0njkNxbNJok/G6aYabQWzjydDbwUbVqq5rkc8TZbgWCgdvuKwCvv/TDjKBM8PwprT7asRJPmdMEwvx2ZXB9IihNV4Z3gYRuhE9sQf7rX9ZqHQAUmsegeZEnbshGxJ3o2ppP2Is/yxyZQTFyj5++U8FIfIaIPmcKeQ0h37cRQSwprc6wjiXjgjstlY+bheeDenGyknsTl47Twfm6r+TyT7zBsemfunWZEM3fnPz8hi70h7g9xtDsw23nwcC58a8CaNRYBMyIgjR4xQ6GgCEIX2I5qBPD3NjZXcw9FNuJ6Z7LNE1wNzskMW3AhWpQxc1KYxBj7tYGsx6CIn9aQ527ENVmW9pcuvPxJ/yBpJKTbEq4XF5/G1e8clvh52l7w92IoB+Gzdvw32zD1UGTqagVmpljTb/eMoSt/snUVvv6VoWzBX0kDoLwcTKAOZ86WQE6rvG4kyf80blhFIAufL0hjBZifmYfSbzK1aX0xxzQ9a/XvfmFsJCGaiwTztsFjBS5Ki0qwvhgzZVr6iHENImJTozNLpUvvl1j1wmN0F857YHEu9lXEV9l0MZ7V7wlnvo/Msf/OfhEFiemEXGJ6+XYkhvlbCiReCa5siNJy80tLCNTjHRHhM=
+  app: slide-stream
+  on:
+    repo: himaratsu/SlideStream-Backend
