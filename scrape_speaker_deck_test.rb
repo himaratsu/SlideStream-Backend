@@ -22,7 +22,7 @@ end
 
 doc = Nokogiri::HTML.parse(html, nil, charset)
 
-p slide_first_url = doc.xpath('//meta[@property="og:image"]').attribute('content').text
+p slide_first_url = doc.xpath('//meta[@property="og:image"]').attribute('content').text.sub("_0.", "_{#No}.")
 # https://speakerd.s3.amazonaws.com/presentations/fcfca49087d04571a050ba2e9e663f36/slide_0.jpg
 
 p slide_hash = slide_first_url.split('/')[4]

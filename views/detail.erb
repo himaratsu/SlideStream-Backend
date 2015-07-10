@@ -1,12 +1,26 @@
 <title><%= @entry.title %></title>
 
+<head>
+<style type="text/css">
+<!--
+img {
+	width: 640px;
+}
+-->
+</style>
+</head>
+
 <h1><%= @entry.title %></h1>
 <div><a href="<%= @entry.link %>"><%= @entry.link %></a></div>
 <div><%= @entry.description %></div>
-<div><%= @entry.hatebu_count %> users</div>
+<div><font color="red" style="bold"><%= @entry.hatebu_count %> users</font></div>
 
 <% @entry.total_count.times do |count| %>
-  <li><img src='<%= @entry.slide_base_image_url.sub("-1-", "-#{count+1}-") %>'>
+  <% if @entry.sitename == "slideshare" %>
+  <li><img src='<%= @entry.slide_base_image_url.sub("#No", "#{count+1}") %>' border="1">
+  <% elsif @entry.sitename == "Speaker Deck" %>
+<li><img src='<%= @entry.slide_base_image_url.sub("#No", "#{count}") %>' border="1">
+  <% end %>
 <% end %>
 
 

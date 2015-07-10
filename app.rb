@@ -6,6 +6,7 @@ require 'yaml'
 require "nokogiri"
 require "open-uri"
 require "open_uri_redirections"
+require 'rest-client'
 
 require_relative 'models/entry.rb'
 
@@ -104,7 +105,9 @@ def crawl(feed_url, sitename)
     dc_subject = item.css('dc|subject').text
     hatena_bookmarkcount = item.css('hatena|bookmarkcount').text
 
-    if !link.include?("www.slideshare.net")
+    if sitename == "slideshare" && !link.include?("www.slideshare.net")
+      next
+    elsif sitename == "Speaker Deck" && !link.include?("speakerdeck.com")
       next
     end
 
@@ -113,6 +116,8 @@ def crawl(feed_url, sitename)
 
       if sitename == "slideshare" 
         scrape_slideshare(link, entry)
+      elsif sitename == "Speaker Deck" 
+        scrape_speakerdeck(link, entry)
       end
 
       entry.hatebu_count = hatena_bookmarkcount
@@ -133,6 +138,8 @@ def crawl(feed_url, sitename)
 
       if sitename == "slideshare" 
         scrape_slideshare(link, entry)
+      elsif sitename == "Speaker Deck" 
+        scrape_speakerdeck(link, entry)
       end
 
       entry.save
@@ -142,9 +149,16 @@ def crawl(feed_url, sitename)
   end
 end
 
+def crawl_slideshare_and_speakerdeck
+  
+end
+
 def crawl_all_hotentry
   slideshare_url="http://b.hatena.ne.jp/search/text?q=www.slideshare.net&mode=rss&sort=popular"
   crawl(slideshare_url, "slideshare")
+
+  speakerdeck_url = "http://b.hatena.ne.jp/search/text?q=speakerdeck.com&sort=popular&mode=rss"
+  crawl(speakerdeck_url, "Speaker Deck")
 end
 
 def crawl_today_entry
@@ -159,11 +173,41 @@ def crawl_with_date(startDateStr, endDateStr=nil)
     endDateStr = startDateStr
   end
 
-  feed_url = "http://b.hatena.ne.jp/search/text?date_begin="+startDateStr+"&date_end="+endDateStr+"&q=www.slideshare.net&sort=popular&users=&mode=rss"
-  crawl(feed_url, "slideshare")
+  slideshare_feed_url = "http://b.hatena.ne.jp/search/text?date_begin="+startDateStr+"&date_end="+endDateStr+"&q=www.slideshare.net&sort=popular&users=&mode=rss"
+  crawl(slideshare_feed_url, "slideshare")
+
+  speakerdeck_feed_url = "http://b.hatena.ne.jp/search/text?date_begin="+startDateStr+"&date_end="+endDateStr+"&q=speakerdeck.com&sort=popular&users=&mode=rss"
+  crawl(speakerdeck_feed_url, "Speaker Deck")
 end
 
 def scrape_slideshare(url, entry)
+  charset = nil
+
+  begin
+    html = open(url, :allow_redirections => :all) do |f|
+      charset = f.charset
+      f.read
+    end
+  rescue OpenURI::HTTPError => ex
+      return "no_url"
+  end 
+
+  doc = Nokogiri::HTML.parse(html, nil, charset)
+  
+  doc.xpath('//div[@id="svPlayerId"]').each do |node|
+    p total_slides = node.xpath('//span[@id="total-slides"]').text
+    entry.total_count = total_slides.to_i
+
+    p slide_first = doc.xpath('//section[@class="slide show"]')[0].xpath('img[@class="slide_image"]').attribute('data-normal').value
+    entry.slide_base_image_url = slide_first.sub("-1-", "-#No-")
+    p "------------"
+  end 
+end
+
+def scrape_speakerdeck(url, entry)
+
+  p url
+
   charset = nil
 
   begin
@@ -177,16 +221,17 @@ def scrape_slideshare(url, entry)
   end 
 
   doc = Nokogiri::HTML.parse(html, nil, charset)
-  
-  doc.xpath('//div[@id="svPlayerId"]').each do |node|
-    p total_slides = node.xpath('//span[@id="total-slides"]').text
-    entry.total_count = total_slides.to_i
 
-    p slide_first = doc.xpath('//section[@class="slide show"]')[0].xpath('img[@class="slide_image"]').attribute('data-normal').value
-    entry.slide_base_image_url = slide_first
-    p "------------"
-  end
-      
+  p slide_first_url = doc.xpath('//meta[@property="og:image"]').attribute('content').text.sub("_0.", "_#No.")
+  entry.slide_base_image_url = slide_first_url
+
+  p slide_hash = slide_first_url.split('/')[4]
+
+  doc = RestClient.get('http://speakerdeck.com/player/' + slide_hash)
+  parsed_doc = Nokogiri::HTML(doc) 
+  slide_count_nav = parsed_doc.xpath('//div[@class="previews"]').children.children.text
+  p total_slides = slide_count_nav.split(" ").last
+  entry.total_count = total_slides
 end
 
 
