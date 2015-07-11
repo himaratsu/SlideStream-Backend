@@ -2,11 +2,27 @@
 
 <h1>登録されたエントリー</h1>
 
-<h2><a href="/crawl_hotentry">人気情報をクロールする</a></h2>
-<h2><a href="/crawl">今日のホッテントリをクロールする</a></h2>
-<h2><a href="/crawl_with_date?start_date=2015-01-01&end_date=2015-06-30">上半期のホッテントリをクロールする</a></h2>
+<h2>人気スライドをクロール</h2>
+<div><a href="/crawl_hotentry">人気情報をクロールする</a></div>
+<div><a href="/crawl">今日のホッテントリをクロールする</a></div>
+<div><a href="/crawl_with_date?start_date=2015-01-01&end_date=2015-06-30">上半期のホッテントリをクロールする</a></div>
+--
+<div><a href="/crawl?mode=this_week">今週のホッテントリをクロールする</a></div>
+<div><a href="/crawl?mode=this_month">今月のホッテントリをクロールする</a></div>
+
+<hr>
+
+<h2>スライド一覧</h2>
+
+<h3>スライド絞り込み</h3>
+<div>
+<div><a href="/entries?mode=today">今日</a></div>
+<div><a href="/entries?mode=this_week">今週</a></div>
+<div><a href="/entries?mode=this_month">今月</a></div>
+<div><a href="/entries?mode=all">すべて</a></div>
+</div>
+<hr>
 
 <% @entries.each do |entry| %>
   <li><a href="/entries/detail?url=<%= entry['link'] %>"><%= entry['title'] %></a> (<%= entry['hatebu_count'] %> users)
-  	- <a href="<%= entry['slide_base_image_url'] %>"><%= entry['total_count'] %></a>
 <% end %>

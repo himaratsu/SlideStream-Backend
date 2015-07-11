@@ -1,4 +1,4 @@
-<title><%= @entry.title %></title>
+<title><%= @entry.title %> | SlideStream</title>
 
 <head>
 <style type="text/css">
@@ -13,7 +13,7 @@ img {
 <h1><%= @entry.title %></h1>
 <div><a href="<%= @entry.link %>"><%= @entry.link %></a></div>
 <div><%= @entry.description %></div>
-<div><font color="red" style="bold"><%= @entry.hatebu_count %> users</font></div>
+<div><a href="http://b.hatena.ne.jp/entry/<%= @entry.link.sub("http://", "").sub("https://", "") %>"><font color="red" style="bold"><%= @entry.hatebu_count %> users</font></a></div>
 
 <% @entry.total_count.times do |count| %>
   <% if @entry.sitename == "slideshare" %>
@@ -25,4 +25,5 @@ img {
 
 
 <hr>
+<div><a href="http://b.hatena.ne.jp/entry/<%= @entry.link.sub("http://", "").sub("https://", "") %>"><font color="red" style="bold"><%= @entry.hatebu_count %> users</font></a></div>
 <a href="/entries">戻る</a>

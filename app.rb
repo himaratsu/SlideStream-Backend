@@ -19,10 +19,18 @@ get '/' do
 end
 
 get '/crawl' do
-  crawl_today_entry
 
-  # speakerdeck_url="http://b.hatena.ne.jp/search/text?q=speakerdeck&mode=rss&sort=popular"
-  # crawl(speakerdeck_url, "speakerdeck")
+  if params.empty? || params.include?(:mode)
+    crawl_today_entry
+  elsif params[:mode] == "today"
+    crawl_today_entry
+  elsif params[:mode] == "this_week"
+    crawl_this_week_entry
+  elsif params[:mode] == "this_month"
+    crawl_this_month_entry
+  else
+    crawl_today_entry
+  end
 
   redirect 'entries'
 end
@@ -48,14 +56,35 @@ get '/crawl_hotentry' do
 end
 
 get '/entries' do
-  @entries = Entry.all
+
+  if params.empty? || params.include?(:mode)
+    entries = Entry.all
+  elsif params[:mode] == "today"
+    from = Time.now.at_beginning_of_day
+    to = from + 1.day
+    entries = Entry.where(postdate: from...to)
+  elsif params[:mode] == "this_week"
+    from = Time.now.at_beginning_of_week
+    to   = from + 1.week
+    entries = Entry.where(postdate: from...to)
+  elsif params[:mode] == "this_month"
+    from = Time.now.at_beginning_of_month
+    to   = from + 1.month
+    entries = Entry.where(postdate: from...to)
+  elsif params[:mode] == "all"
+    entries = Entry.all
+  else
+    entries = Entry.all
+  end
+
+  @entries = entries
   erb :crawl
 end
 
 get '/entries.json' do 
   content_type :json, :charset => 'utf-8'
 
-  if params.empty? || params.include?("mode")
+  if params.empty? || params.include?(:mode)
     entries = Entry.all
   elsif params[:mode] == "today"
     from = Time.now.at_beginning_of_day
@@ -89,6 +118,32 @@ get '/entries/detail' do
   @entry = Entry.find_by_link(url)
   erb :detail
 end
+
+get '/refresh' do
+
+  entries = Entry.all
+  entries.each do |entry|
+    url = "http://api.b.st-hatena.com/entry.count?url=#{entry.link}"
+
+    charset = nil
+
+    begin
+      value = open(url) do |f|
+        charset = f.charset
+        f.read
+      end
+    rescue OpenURI::HTTPError => ex
+        puts "Handle missing video here"
+        return "no_url"
+    end 
+
+    entry.hatebu_count = value
+    entry.save
+  end
+
+  redirect 'entries'
+end
+
 
 def crawl(feed_url, sitename)
 
@@ -165,6 +220,18 @@ def crawl_today_entry
   today = Date.today
   todayStr = today.strftime("%Y-%m-%d")
   crawl_with_date(todayStr)
+end
+
+def crawl_this_week_entry
+  p from = Time.now.at_beginning_of_week
+  p to   = from + 1.week
+  crawl_with_date(from.strftime("%Y-%m-%d"), to.strftime("%Y-%m-%d"))
+end
+
+def crawl_this_month_entry
+  p from = Time.now.at_beginning_of_month
+  p to   = from + 1.month
+  crawl_with_date(from.strftime("%Y-%m-%d"), to.strftime("%Y-%m-%d"))
 end
 
 def crawl_with_date(startDateStr, endDateStr=nil)
