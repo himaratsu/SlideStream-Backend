@@ -137,7 +137,7 @@ get '/refresh' do
         return "no_url"
     end 
 
-    entry.hatebu_count = value
+    p entry.hatebu_count = value
     entry.save
   end
 
