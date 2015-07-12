@@ -91,6 +91,10 @@ get '/entries.json' do
     from = Time.now.at_beginning_of_day
     to = from + 1.day
     entries = Entry.where(postdate: from...to)
+  elsif params[:mode] == "recently"
+    from = Time.now.at_beginning_of_day - 2.day
+    to = from + 2.day
+    entries = Entry.where(postdate: from...to)
   elsif params[:mode] == "this_week"
     from = Time.now.at_beginning_of_week
     to   = from + 1.week
