@@ -16,6 +16,7 @@ ActiveRecord::Base.establish_connection(ENV["DATABASE_URL"] || :development)
 
 get '/' do
   'Hello'
+  redirect 'entries'
 end
 
 get '/crawl' do
@@ -85,23 +86,23 @@ get '/entries.json' do
   content_type :json, :charset => 'utf-8'
 
   if params.empty? || params.include?(:mode)
-    entries = Entry.all
+    entries = Entry.all.order("hatebu_count")
   elsif params[:mode] == "today"
     from = Time.now.at_beginning_of_day
     to = from + 1.day
-    entries = Entry.where(postdate: from...to)
+    entries = Entry.where(postdate: from...to).order("hatebu_count")
   elsif params[:mode] == "this_week"
     from = Time.now.at_beginning_of_week
     to   = from + 1.week
-    entries = Entry.where(postdate: from...to)
+    entries = Entry.where(postdate: from...to).order("hatebu_count")
   elsif params[:mode] == "this_month"
     from = Time.now.at_beginning_of_month
     to   = from + 1.month
-    entries = Entry.where(postdate: from...to)
+    entries = Entry.where(postdate: from...to).order("hatebu_count")
   elsif params[:mode] == "all"
-    entries = Entry.all
+    entries = Entry.all.order("hatebu_count")
   else
-    entries = Entry.all
+    entries = Entry.all.order("hatebu_count")
   end
 
   entries.to_json
