@@ -92,8 +92,8 @@ get '/entries.json' do
     to = from + 1.day
     entries = Entry.where(postdate: from...to)
   elsif params[:mode] == "recently"
-    from = Time.now.at_beginning_of_day - 2.day
-    to = from + 2.day
+    to = Time.now
+    from = to.at_beginning_of_day - 1.day
     entries = Entry.where(postdate: from...to)
   elsif params[:mode] == "this_week"
     from = Time.now.at_beginning_of_week
@@ -112,7 +112,7 @@ get '/entries.json' do
   if params.empty? || params.include?(:sort)
     entries = entries.order("hatebu_count DESC")
   elsif params[:sort] == "latest"
-    entries = entries.order("postdate")
+    entries = entries.order("postdate DESC")
   end
 
   entries.to_json
