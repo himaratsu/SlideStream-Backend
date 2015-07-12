@@ -86,23 +86,23 @@ get '/entries.json' do
   content_type :json, :charset => 'utf-8'
 
   if params.empty? || params.include?(:mode)
-    entries = Entry.all.order("hatebu_count")
+    entries = Entry.all.order("hatebu_count DESC")
   elsif params[:mode] == "today"
     from = Time.now.at_beginning_of_day
     to = from + 1.day
-    entries = Entry.where(postdate: from...to).order("hatebu_count")
+    entries = Entry.where(postdate: from...to).order("hatebu_count DESC")
   elsif params[:mode] == "this_week"
     from = Time.now.at_beginning_of_week
     to   = from + 1.week
-    entries = Entry.where(postdate: from...to).order("hatebu_count")
+    entries = Entry.where(postdate: from...to).order("hatebu_count DESC")
   elsif params[:mode] == "this_month"
     from = Time.now.at_beginning_of_month
     to   = from + 1.month
-    entries = Entry.where(postdate: from...to).order("hatebu_count")
+    entries = Entry.where(postdate: from...to).order("hatebu_count DESC")
   elsif params[:mode] == "all"
-    entries = Entry.all.order("hatebu_count")
+    entries = Entry.all.order("hatebu_count DESC")
   else
-    entries = Entry.all.order("hatebu_count")
+    entries = Entry.all.order("hatebu_count DESC")
   end
 
   entries.to_json
