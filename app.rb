@@ -19,6 +19,45 @@ get '/' do
   redirect 'entries'
 end
 
+get '/slides' do
+
+  p params
+  p params[:url]
+
+  if params[:url] != nil && params[:sitename] != nil
+
+    if Entry.exists?(:link => params[:url])
+      entry = Entry.find_by_link(params[:url])
+
+      # if sitename == "slideshare" 
+        # scrape_slideshare(link, entry)
+      # elsif sitename == "Speaker Deck" 
+        # scrape_speakerdeck(link, entry)
+      # end
+
+      # entry.hatebu_count = hatena_bookmarkcount
+      # entry.save
+    else
+      entry = Entry.new
+      entry.title = ""
+      entry.link = params[:url]
+      entry.description = ""
+      entry.postdate = Date.today
+      entry.category = "None"
+      entry.hatebu_count = 0
+      entry.sitename = params[:sitename] # slideshare or Speaker Deck
+
+      scrape_slideshare(entry.link, entry)
+
+      entry.save
+    end
+
+    entry.to_json
+  else
+    {:result => "error"}.to_json
+  end
+end
+
 get '/crawl' do
 
   if params.empty? || params.include?(:mode)
