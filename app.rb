@@ -29,14 +29,13 @@ get '/slides' do
     if Entry.exists?(:link => params[:url])
       entry = Entry.find_by_link(params[:url])
 
-      # if sitename == "slideshare" 
-        # scrape_slideshare(link, entry)
-      # elsif sitename == "Speaker Deck" 
-        # scrape_speakerdeck(link, entry)
-      # end
+      if params[:sitename] == "slideshare"
+        scrape_slideshare(entry.link, entry, true)
+      elsif params[:sitename] == "Speaker Deck"
+        scrape_speakerdeck(entry.link, entry, true)
+      end
 
-      # entry.hatebu_count = hatena_bookmarkcount
-      # entry.save
+      entry.save
     else
       entry = Entry.new
       entry.title = ""
@@ -47,7 +46,11 @@ get '/slides' do
       entry.hatebu_count = 0
       entry.sitename = params[:sitename] # slideshare or Speaker Deck
 
-      scrape_slideshare(entry.link, entry)
+      if params[:sitename] == "slideshare"
+        scrape_slideshare(entry.link, entry, true)
+      elsif params[:sitename] == "Speaker Deck"
+        scrape_speakerdeck(entry.link, entry, true)
+      end
 
       entry.save
     end
@@ -297,7 +300,7 @@ def crawl_with_date(startDateStr, endDateStr=nil)
   crawl(speakerdeck_feed_url, "Speaker Deck")
 end
 
-def scrape_slideshare(url, entry)
+def scrape_slideshare(url, entry , is_full = false)
   charset = nil
 
   begin
@@ -310,6 +313,14 @@ def scrape_slideshare(url, entry)
   end 
 
   doc = Nokogiri::HTML.parse(html, nil, charset)
+
+  if is_full
+    entry.title = doc.title
+
+    uri = URI.parse("http://api.b.st-hatena.com/entry.count?url="+url)
+    p uri
+    p Net::HTTP.get(uri) 
+  end
   
   doc.xpath('//div[@id="svPlayerId"]').each do |node|
     p total_slides = node.xpath('//span[@id="total-slides"]').text
@@ -321,7 +332,7 @@ def scrape_slideshare(url, entry)
   end 
 end
 
-def scrape_speakerdeck(url, entry)
+def scrape_speakerdeck(url, entry, is_full = false)
 
   p url
 
