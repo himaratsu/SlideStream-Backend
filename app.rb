@@ -317,9 +317,9 @@ def scrape_slideshare(url, entry , is_full = false)
   if is_full
     entry.title = doc.title
 
-    uri = URI.parse("http://api.b.st-hatena.com/entry.count?url="+url)
-    p uri
-    p Net::HTTP.get(uri) 
+    open(url) do |f|
+      entry.hatebu_count = f.read
+    end
   end
   
   doc.xpath('//div[@id="svPlayerId"]').each do |node|
@@ -353,9 +353,9 @@ def scrape_speakerdeck(url, entry, is_full = false)
   if is_full
     entry.title = doc.title
 
-    uri = URI.parse("http://api.b.st-hatena.com/entry.count?url="+url)
-    p uri
-    p Net::HTTP.get(uri) 
+    open(url) do |f|
+      entry.hatebu_count = f.read
+    end
   end
 
   p slide_first_url = doc.xpath('//meta[@property="og:image"]').attribute('content').text.sub("_0.", "_#No.")
