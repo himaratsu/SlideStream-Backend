@@ -317,7 +317,7 @@ def scrape_slideshare(url, entry , is_full = false)
   if is_full
     entry.title = doc.title
 
-    open(url) do |f|
+    open("http://api.b.st-hatena.com/entry.count?url="+url) do |f|
       entry.hatebu_count = f.read
     end
   end
@@ -353,7 +353,7 @@ def scrape_speakerdeck(url, entry, is_full = false)
   if is_full
     entry.title = doc.title
 
-    open(url) do |f|
+    open("http://api.b.st-hatena.com/entry.count?url="+url) do |f|
       entry.hatebu_count = f.read
     end
   end
