@@ -350,6 +350,14 @@ def scrape_speakerdeck(url, entry, is_full = false)
 
   doc = Nokogiri::HTML.parse(html, nil, charset)
 
+  if is_full
+    entry.title = doc.title
+
+    uri = URI.parse("http://api.b.st-hatena.com/entry.count?url="+url)
+    p uri
+    p Net::HTTP.get(uri) 
+  end
+
   p slide_first_url = doc.xpath('//meta[@property="og:image"]').attribute('content').text.sub("_0.", "_#No.")
   entry.slide_base_image_url = slide_first_url
 
