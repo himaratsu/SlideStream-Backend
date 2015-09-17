@@ -21,9 +21,6 @@ end
 
 get '/slides' do
 
-  p params
-  p params[:url]
-
   if params[:url] != nil && params[:sitename] != nil
 
     if Entry.exists?(:link => params[:url])
@@ -100,24 +97,34 @@ end
 
 get '/entries' do
 
+  offset = 0
+  limit = 20
+
+  if params[:offset] != nil
+    offset = params[:offset]
+  end
+  if params[:limit] != nil
+    limit = params[:limit]
+  end
+
   if params.empty? || params.include?(:mode)
-    entries = Entry.all
+    entries = Entry.all.limit(limit).offset(offset)
   elsif params[:mode] == "today"
     from = Time.now.at_beginning_of_day
     to = from + 1.day
-    entries = Entry.where(postdate: from...to)
+    entries = Entry.where(postdate: from...to).limit(limit).offset(offset)
   elsif params[:mode] == "this_week"
     from = Time.now.at_beginning_of_week
     to   = from + 1.week
-    entries = Entry.where(postdate: from...to)
+    entries = Entry.where(postdate: from...to).limit(limit).offset(offset)
   elsif params[:mode] == "this_month"
     from = Time.now.at_beginning_of_month
     to   = from + 1.month
-    entries = Entry.where(postdate: from...to)
+    entries = Entry.where(postdate: from...to).limit(limit).offset(offset)
   elsif params[:mode] == "all"
-    entries = Entry.all
+    entries = Entry.all.limit(limit).offset(offset)
   else
-    entries = Entry.all
+    entries = Entry.all.limit(limit).offset(offset)
   end
 
   @entries = entries
