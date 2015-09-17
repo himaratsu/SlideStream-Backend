@@ -134,6 +134,16 @@ end
 get '/entries.json' do 
   content_type :json, :charset => 'utf-8'
 
+  offset = 0
+  limit = 20
+
+  if params[:offset] != nil
+    p offset = params[:offset]
+  end
+  if params[:limit] != nil
+    p limit = params[:limit]
+  end
+
   if params.empty? || params.include?(:mode)
     entries = Entry.all
   elsif params[:mode] == "today"
@@ -159,9 +169,11 @@ get '/entries.json' do
   end
 
   if params.empty? || params.include?(:sort)
-    entries = entries.order("hatebu_count DESC")
+    entries = entries.order("hatebu_count DESC").limit(limit).offset(offset)
   elsif params[:sort] == "latest"
-    entries = entries.order("postdate DESC")
+    entries = entries.order("postdate DESC").limit(limit).offset(offset)
+  else 
+    entries = entries.limit(limit).offset(offset)
   end
 
   entries.to_json
